@@ -12,26 +12,28 @@
 #include <string.h>
 #include "dp.h"
 
+#define MAX_SLEEP_TIME 5
+
 void *philosopher_loop(void *param)
 {
-	int help_time;
+  int phil_number = (int *)param; // The ID of this philosopher
 
 	/* seed random generator */
 	srandom((unsigned)time(NULL));
 
-	while (1) {
-
-	  sem_wait(&ta_sem);
-	  while(waiting_students > 0){
-	    sem_post(&students_sem);
-
-			/* Help student */
-			help_time = (int)((random() % MAX_SLEEP_TIME) + 1);
-	    help_student(help_time);
-			
-			/* Notify student they are finished being helped */
-			sem_post(&help_sem[student_number]);
-	  }
-	}
+  // Loop Thinking->Hungry->Eating 5 times
+  for (int i=0; i<5; i++){
+    sleep_time = (int)((random() % MAX_SLEEP_TIME) +1);
+    printf("Philosopher %d Thinking for %d seconds...\n", phil_number, sleep_time);
+    sleep(sleep_time);
+    
+    //**************************
+    // TODO: Hungry loop
+    //**************************
+    
+    // *************************
+    // TODO: Eating
+    // *************************
+  }
 }
 
