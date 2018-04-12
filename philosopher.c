@@ -38,6 +38,8 @@ void *philosopher_loop(void *param)
           pthread_mutex_unlock(&mutex_lock);
           break;
         }
+	else
+	  sem_post(&sem_vars[*phil_number]);
       pthread_mutex_unlock(&mutex_lock);
       sleep(1);
     }
