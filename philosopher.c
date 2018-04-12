@@ -16,24 +16,32 @@
 
 void *philosopher_loop(void *param)
 {
-  int phil_number = (int *)param; // The ID of this philosopher
-
-	/* seed random generator */
-	srandom((unsigned)time(NULL));
+  int *phil_number = (int *)param; // The ID of this philosopher
+  int sleep_time;
 
   // Loop Thinking->Hungry->Eating 5 times
   for (int i=0; i<5; i++){
-    sleep_time = (int)((random() % MAX_SLEEP_TIME) +1);
-    printf("Philosopher %d Thinking for %d seconds...\n", phil_number, sleep_time);
+    state[*phil_number] = THINKING;
+    sleep_time = get_next_number();
+    printf("Philosopher %d Thinking for %d seconds...\n", *phil_number, sleep_time);
     sleep(sleep_time);
     
     //**************************
-    // TODO: Hungry loop
+    // TODO: Real Hungry loop
     //**************************
+    state[*phil_number] = HUNGRY;
+    sleep_time = get_next_number();
+    printf("Philosopher %d Hungry for %d seconds...\n", *phil_number, sleep_time);
+    sleep(sleep_time);
+    
     
     // *************************
     // TODO: Eating
     // *************************
+    state[*phil_number] = EATING;
+    sleep_time = get_next_number();
+    printf("Philosopher %d Eating for %d seconds...\n", *phil_number, sleep_time);
+    sleep(sleep_time);
   }
 }
 

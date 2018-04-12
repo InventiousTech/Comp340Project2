@@ -9,6 +9,8 @@
 
 pthread_t philosophers[NUM_OF_PHILOSOPHERS];
 
+void *philosopher_loop(void *param);
+
 /**
  * Initialize all relevant data structures and
  * synchronization objects.
@@ -28,7 +30,15 @@ void init()
     if ( sem_init(&phil_sem[i], 0, 0) == -1)
       printf("error init philosopher semaphore\n");
   }
-
+  
+  rand_position = 0;
+  
+  // *****************************
+  // TODO: Read file with random ints
+  // *****************************
+  // Temporary random numbers
+  for (i = 0; i < MAX_LENGTH; i++)
+    rand_numbers[i] = i % 5;
 }
 
 void create_philosophers()
@@ -40,6 +50,16 @@ void create_philosophers()
   }
 }
 
+int get_next_number()
+{
+  int temp;
+  pthread_mutex_lock(&mutex_rand);
+  temp = rand_numbers[rand_position];
+  rand_position++;
+  pthread_mutex_unlock(&mutex_rand);
+  return temp;  
+}
+
 int main(int argc, char** argv)
 {
 	// First check to see if we got an argument
@@ -48,10 +68,6 @@ int main(int argc, char** argv)
     return 1;
   }
   int i;
-
-  // *****************************
-  // TODO: Read file with random ints
-  // *****************************
   
   init();
   
