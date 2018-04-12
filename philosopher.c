@@ -26,22 +26,28 @@ void *philosopher_loop(void *param)
     printf("Philosopher %d Thinking for %d seconds...\n", *phil_number, sleep_time);
     sleep(sleep_time);
     
-    //**************************
-    // TODO: Real Hungry loop
-    //**************************
+    // Spin while hungry and unable to eat
+    printf("Philospher %d is hungry.\n", *phil_number);
     state[*phil_number] = HUNGRY;
-    sleep_time = get_next_number();
-    printf("Philosopher %d Hungry for %d seconds...\n", *phil_number, sleep_time);
-    sleep(sleep_time);
-    
-    
-    // *************************
-    // TODO: Eating
-    // *************************
+    while (1)
+    {
+      pthread_mutex_lock(&mutex_lock);
+      if (!sem_trywait(&sem_vars[*phil_number]))
+        if (!sem_trywait(&sem_vars[(*phil_number + 1) % NUM_OF_PHILOSOPHERS]))
+        {
+          pthread_mutex_unlock(&mutex_lock);
+          break;
+        }
+      pthread_mutex_unlock(&mutex_lock);
+      sleep(1);
+    }
+   
     state[*phil_number] = EATING;
     sleep_time = get_next_number();
     printf("Philosopher %d Eating for %d seconds...\n", *phil_number, sleep_time);
     sleep(sleep_time);
+    sem_post(&sem_vars[*phil_number]);
+    sem_post(&sem_vars[(*phil_number + 1) % NUM_OF_PHILOSOPHERS]);
   }
 }
 

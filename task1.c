@@ -27,7 +27,7 @@ void init()
      
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++){
     phil_id[i] = i;
-    if ( sem_init(&phil_sem[i], 0, 0) == -1)
+    if ( sem_init(&sem_vars[i], 0, 1) == -1)
       printf("error init philosopher semaphore\n");
   }
   
@@ -38,7 +38,7 @@ void init()
   // *****************************
   // Temporary random numbers
   for (i = 0; i < MAX_LENGTH; i++)
-    rand_numbers[i] = i % 5;
+    rand_numbers[i] = (i % 5) + 1;
 }
 
 void create_philosophers()
@@ -78,8 +78,7 @@ int main(int argc, char** argv)
   
   
 	for (i=0; i<NUM_OF_PHILOSOPHERS; i++)
-		sem_destroy(&phil_sem[i]);
+		sem_destroy(&sem_vars[i]);
 	
   return 0;
 }
-

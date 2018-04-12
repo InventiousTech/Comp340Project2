@@ -32,7 +32,7 @@ enum {THINKING, HUNGRY, EATING} state[NUM_OF_PHILOSOPHERS];
 int phil_id[NUM_OF_PHILOSOPHERS];
 
 // semaphore variables and associated mutex lock
-sem_t		phil_sem[NUM_OF_PHILOSOPHERS];
+sem_t		sem_vars[NUM_OF_PHILOSOPHERS];
 pthread_mutex_t 	mutex_lock;
 
 //function that simulates the philosopher operation
