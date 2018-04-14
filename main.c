@@ -87,7 +87,7 @@ int main(int argc, char** argv)
   /* Record start time so that each operation can print elapsed time */  
   clock_gettime(CLOCK_MONOTONIC, &begin);
 
-  printf("[ time  ] Action");
+  printf("[ time  ] Action\n");
   create_philosophers();
   
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++)
