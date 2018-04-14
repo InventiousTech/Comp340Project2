@@ -1,5 +1,7 @@
 /*
- * This file calculates and prints the current time
+ * Author:    Isaac Hendrickson
+ * Date:      April 14th, 2018
+ * Purpose:   This file calculates and prints the current time
  */
 
 #include "dp.h"
