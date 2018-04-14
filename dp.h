@@ -41,6 +41,9 @@ struct timespec begin, end;
 double elapsedTime;
 void print_time();
 
+// Verbosity
+int verbose;
+
 // the id of each philosopher (0 .. NUMBER - 1)
 int phil_id[NUM_OF_PHILOSOPHERS];
 

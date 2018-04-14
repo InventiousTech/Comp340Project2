@@ -46,11 +46,11 @@ void *philosopher_loop(void *param)
     
     
     // ********** ACQUIRE CHOPSTICKS ***************
-    printf("Philosopher %d locking chopstick %d\n", *phil_number, stick1);
+    if (verbose) printf("Philosopher %d locking chopstick %d\n", *phil_number, stick1);
     sem_wait(&sem_vars[stick1]);
-    printf("Philosopher %d locking chopstick %d\n", *phil_number, stick2);
+    if (verbose) printf("Philosopher %d locking chopstick %d\n", *phil_number, stick2);
     sem_wait(&sem_vars[stick2]);
-    printf("Philosopher %d got both locks\n", *phil_number);
+    if (verbose) printf("Philosopher %d got both locks\n", *phil_number);
     // ***********************************************
    
     state[*phil_number] = EATING;

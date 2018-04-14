@@ -57,12 +57,19 @@ int get_next_number()
 
 int main(int argc, char** argv)
 {
-  // First check to see if we got an argument
+  int i;
+  verbose = 0;
+  
+  // Check to see if we got a filename for random numbers
   if (argc < 2){
-    printf("ERROR: Missing Arguments. Usage is \"task1 <filename>\"\n");
+    printf("ERROR: Missing Arguments. Usage is \"task1 <filename> [-v]\"\n\tThe -v option enables verbose output\n");
     return 1;
   }
-  int i;
+  
+  // Set verbosity
+  if ((argc >2) && (strcmp(argv[2], "-v")==0)){
+    verbose = 1;
+  }
   
   init();
   
