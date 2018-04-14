@@ -18,35 +18,42 @@ void *philosopher_loop(void *param)
 {
   int *phil_number = (int *)param; // The ID of this philosopher
   int sleep_time;
+  int i;
 
   // Loop Thinking->Hungry->Eating 5 times
-  for (int i=0; i<5; i++){
+  for (i=0; i<5; i++){
     state[*phil_number] = THINKING;
     sleep_time = get_next_number();
-    printf("Philosopher %d Thinking for %d seconds...\n", *phil_number, sleep_time);
+    pthread_mutex_lock(&mutex_time);
+    print_time();
+    printf("Philosopher %d THINKING for %d seconds\n", *phil_number, sleep_time);
+    pthread_mutex_unlock(&mutex_time);
     sleep(sleep_time);
     
     // Spin while hungry and unable to eat
-    printf("Philospher %d is hungry.\n", *phil_number);
+    pthread_mutex_lock(&mutex_time);
+    print_time();
+    printf("Philosopher %d HUNGRY\n", *phil_number);
+    pthread_mutex_unlock(&mutex_time);
     state[*phil_number] = HUNGRY;
     while (1)
     {
-      pthread_mutex_lock(&mutex_lock);
-      if (!sem_trywait(&sem_vars[*phil_number]))
-        if (!sem_trywait(&sem_vars[(*phil_number + 1) % NUM_OF_PHILOSOPHERS]))
+      if (!sem_trywait(&sem_vars[(*phil_number==(NUM_OF_PHILOSOPHERS-1))?0:(*phil_number)]))
+        if (!sem_trywait(&sem_vars[(*phil_number==(NUM_OF_PHILOSOPHERS-1))?(*phil_number):(*phil_number+1)]))
         {
-          pthread_mutex_unlock(&mutex_lock);
           break;
         }
 	else
 	  sem_post(&sem_vars[*phil_number]);
-      pthread_mutex_unlock(&mutex_lock);
       sleep(1);
     }
    
     state[*phil_number] = EATING;
     sleep_time = get_next_number();
-    printf("Philosopher %d Eating for %d seconds...\n", *phil_number, sleep_time);
+    pthread_mutex_lock(&mutex_time);
+    print_time();
+    printf("Philosopher %d EATING   for %d seconds\n", *phil_number, sleep_time);
+    pthread_mutex_unlock(&mutex_time);
     sleep(sleep_time);
     sem_post(&sem_vars[*phil_number]);
     sem_post(&sem_vars[(*phil_number + 1) % NUM_OF_PHILOSOPHERS]);

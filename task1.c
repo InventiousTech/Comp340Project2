@@ -1,10 +1,11 @@
+#include "dp.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <semaphore.h>
 #include <string.h>
 #include <errno.h>
 #include <time.h>
-#include "dp.h"
+
 
 
 pthread_t philosophers[NUM_OF_PHILOSOPHERS];
@@ -33,12 +34,6 @@ void init()
   
   rand_position = 0;
   
-  // *****************************
-  // TODO: Read file with random ints
-  // *****************************
-  // Temporary random numbers
-  for (i = 0; i < MAX_LENGTH; i++)
-    rand_numbers[i] = (i % 5) + 1;
 }
 
 void create_philosophers()
@@ -62,15 +57,29 @@ int get_next_number()
 
 int main(int argc, char** argv)
 {
-	// First check to see if we got an argument
+  // First check to see if we got an argument
   if (argc < 2){
-    printf("ERROR: Missing Arguments. Usage is \"task2 <filename>\"\n");
+    printf("ERROR: Missing Arguments. Usage is \"task1 <filename>\"\n");
     return 1;
   }
   int i;
   
   init();
   
+  // Load random numbers from file
+  FILE *numberFile;
+  numberFile = fopen(argv[1], "r");
+  if (numberFile == NULL){
+    printf("Invalid filename. Exiting.\n");
+    exit(1);
+  }
+  for (i = 0; i < MAX_LENGTH; i++)
+    fscanf(numberFile, "%d", &rand_numbers[i]);
+  fclose(numberFile);
+
+  /* Record start time so that each operation can print elapsed time */  
+  clock_gettime(CLOCK_MONOTONIC, &begin);
+
   create_philosophers();
   
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++)

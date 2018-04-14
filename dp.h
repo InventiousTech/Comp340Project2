@@ -2,6 +2,11 @@
  * Header file for dining philosophers
  */
 
+#ifndef DP_H
+#define DP_H
+
+#define _POSIX_C_SOURCE 200809L
+
 #include <pthread.h>
 #include <semaphore.h>  
 #include <stdlib.h>
@@ -22,11 +27,19 @@ int get_next_number();
 //mutex lock to use in order to protect the order of random numbers
 pthread_mutex_t mutex_rand;
 
+// Mutex to make sure only one process prints info at a time
+pthread_mutex_t mutex_time;
+
 //position of next random number 
 int rand_position;
 
 // the state of each philosopher (THINKING, HUNGRY, EATING)
 enum {THINKING, HUNGRY, EATING} state[NUM_OF_PHILOSOPHERS];
+
+// Timing variables
+struct timespec begin, end;
+double elapsedTime;
+void print_time();
 
 // the id of each philosopher (0 .. NUMBER - 1)
 int phil_id[NUM_OF_PHILOSOPHERS];
@@ -43,3 +56,5 @@ void pickup_chopsticks(int number);
 
 //function for the philosopher to return the chopsticks
 void return_chopsticks(int number);
+
+#endif
