@@ -30,8 +30,8 @@ int get_next_number();
 //mutex lock to use in order to protect the order of random numbers
 pthread_mutex_t mutex_rand;
 
-// Mutex to make sure only one process prints info at a time
-pthread_mutex_t mutex_time;
+// Mutexes to protect time-keeping and status-printing
+pthread_mutex_t mutex_time, mutex_print;
 
 //position of next random number 
 int rand_position;

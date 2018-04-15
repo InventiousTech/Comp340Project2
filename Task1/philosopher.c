@@ -44,10 +44,10 @@ void *philosopher_loop(void *param)
     // ****** THINKING **************
     state[*phil_number] = THINKING;
     sleep_time = get_next_number();
-    pthread_mutex_lock(&mutex_time);
+    pthread_mutex_lock(&mutex_print);
     print_time();
     printf("Philosopher %d THINKING for %d seconds\n", *phil_number, sleep_time);
-    pthread_mutex_unlock(&mutex_time);
+    pthread_mutex_unlock(&mutex_print);
     sleep(sleep_time);
     // ******************************
     
@@ -56,10 +56,10 @@ void *philosopher_loop(void *param)
     /* Print out to console */
     state[*phil_number] = HUNGRY;
     clock_gettime(CLOCK_MONOTONIC, &wait_start);
-    pthread_mutex_lock(&mutex_time);
+    pthread_mutex_lock(&mutex_print);
     print_time();
     printf("Philosopher %d HUNGRY\n", *phil_number);
-    pthread_mutex_unlock(&mutex_time);
+    pthread_mutex_unlock(&mutex_print);
     
     /* Acquire Chopsticks, stick1 then stick2 */
     if (verbose) printf("Philosopher %d locking chopstick %d\n", *phil_number, stick1);
@@ -72,22 +72,22 @@ void *philosopher_loop(void *param)
     
     // *** record timing ****
     wait_time = ((double)wait_end.tv_sec + (double)wait_end.tv_nsec/1000000000.0) - ((double)wait_start.tv_sec + (double)wait_start.tv_nsec/1000000000.0);
-    pthread_mutex_lock(&mutex_lock);
+    pthread_mutex_lock(&mutex_time);
     if (wait_time > max_wait_time)
       max_wait_time = wait_time;
     wait_time_array[wait_index] = wait_time;
     wait_index++;
-    pthread_mutex_unlock(&mutex_lock);
+    pthread_mutex_unlock(&mutex_time);
     // **********************
    
    
     // ********* EATING *************
     state[*phil_number] = EATING;
     sleep_time = get_next_number();
-    pthread_mutex_lock(&mutex_time);
+    pthread_mutex_lock(&mutex_print);
     print_time();
     printf("Philosopher %d EATING   for %d seconds\n", *phil_number, sleep_time);
-    pthread_mutex_unlock(&mutex_time);
+    pthread_mutex_unlock(&mutex_print);
     sleep(sleep_time);
     sem_post(&sem_vars[stick2]);
     sem_post(&sem_vars[stick1]);

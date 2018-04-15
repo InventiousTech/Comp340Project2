@@ -28,8 +28,14 @@ void init()
      
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++){
     phil_id[i] = i;
-    if ( sem_init(&sem_vars[i], 0, 1) == -1)
-      printf("error init philosopher semaphore\n");
+    if ( sem_init(&sem_vars[i], 0, 1) == -1){
+      printf("error init chopstick semaphores\n");
+      exit(1);
+    }
+  }
+  if (sem_init(&sem_central, 0, 1) == -1){
+    printf("error init central chopstick semaphore\n");
+    exit(1);
   }
   
   rand_position = 0;

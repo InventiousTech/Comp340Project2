@@ -6,6 +6,7 @@
 #define DP_H
 
 #define _POSIX_C_SOURCE 200809L
+#define _BSD_SOURCE
 
 #include <pthread.h>
 #include <semaphore.h>  
@@ -30,8 +31,8 @@ int get_next_number();
 //mutex lock to use in order to protect the order of random numbers
 pthread_mutex_t mutex_rand;
 
-// Mutex to make sure only one process prints info at a time
-pthread_mutex_t mutex_time;
+// Mutexes to protect time-keeping and status-printing
+pthread_mutex_t mutex_time, mutex_print;
 
 //position of next random number 
 int rand_position;
@@ -55,6 +56,7 @@ int phil_id[NUM_OF_PHILOSOPHERS];
 
 // semaphore variables and associated mutex lock
 sem_t		sem_vars[NUM_OF_PHILOSOPHERS];
+sem_t   sem_central;  // Central chopstick
 pthread_mutex_t 	mutex_lock;
 
 //function that simulates the philosopher operation
