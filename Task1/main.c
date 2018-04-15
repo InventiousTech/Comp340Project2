@@ -59,21 +59,22 @@ int main(int argc, char** argv)
 {
   int i;
   verbose = 0;
+  wait_index = 0;
   
-  // Check to see if we got a filename for random numbers
+  /* Check to see if we got a filename for random numbers */
   if (argc < 2){
     printf("ERROR: Missing Arguments. Usage is \"task1 <filename> [-v]\"\n\tThe -v option enables verbose output\n");
     return 1;
   }
   
-  // Set verbosity
+  /* Set verbosity */
   if ((argc >2) && (strcmp(argv[2], "-v")==0)){
     verbose = 1;
   }
   
   init();
   
-  // Load random numbers from file
+  /* Load random numbers from file */
   FILE *numberFile;
   numberFile = fopen(argv[1], "r");
   if (numberFile == NULL){
@@ -93,6 +94,13 @@ int main(int argc, char** argv)
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++)
     pthread_join(philosophers[i], NULL);
   
+  /* Calculate and display wait times */
+  for (i = 0; i < wait_index; i++){
+    average_wait_time += wait_time_array[i];
+  }
+  average_wait_time = average_wait_time/((double)wait_index);
+  printf("Average wait time was: %.4f\n", average_wait_time);
+  printf("Maximum wait time was: %.4f\n", max_wait_time);
   
 	for (i=0; i<NUM_OF_PHILOSOPHERS; i++)
 		sem_destroy(&sem_vars[i]);

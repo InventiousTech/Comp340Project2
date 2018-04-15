@@ -23,18 +23,23 @@
 
 void *philosopher_loop(void *param)
 {
-  int *phil_number = (int *)param; // The ID of this philosopher
+  /* The ID of this philosopher */
+  int *phil_number = (int *)param;
+  
+  /* Timing Variables */
+  struct timespec wait_start, wait_end;
+  double wait_time;
   int sleep_time;
   int i;
   
-  // The two chopsticks adjacent to this philosopher. 
-  // stick1 is the first stick the philosopher picks up, stick2 is the second
+  /* The two chopsticks adjacent to this philosopher.  */
+  /* stick1 is the first stick the philosopher picks up, stick2 is the second */
   int stick1, stick2; 
   stick1 = ((*phil_number%2)==0)?(*phil_number):((*phil_number+1) % NUM_OF_PHILOSOPHERS);
   stick2 = ((*phil_number%2)!=0)?(*phil_number):((*phil_number+1) % NUM_OF_PHILOSOPHERS);
   
-  // Loop Thinking->Hungry->Eating 5 times
-  for (i=0; i<5; i++){
+  /* Loop Thinking->Hungry->Eating 5 times */
+  for (i=0; i<NUM_OF_LOOPS; i++){
     
     // ****** THINKING **************
     state[*phil_number] = THINKING;
@@ -48,20 +53,32 @@ void *philosopher_loop(void *param)
     
     
     // ********** HUNGRY ************
-    // Print out to console
+    /* Print out to console */
     state[*phil_number] = HUNGRY;
+    clock_gettime(CLOCK_MONOTONIC, &wait_start);
     pthread_mutex_lock(&mutex_time);
     print_time();
     printf("Philosopher %d HUNGRY\n", *phil_number);
     pthread_mutex_unlock(&mutex_time);
     
-    // Acquire Chopsticks, stick1 then stick2
+    /* Acquire Chopsticks, stick1 then stick2 */
     if (verbose) printf("Philosopher %d locking chopstick %d\n", *phil_number, stick1);
     sem_wait(&sem_vars[stick1]);
     if (verbose) printf("Philosopher %d locking chopstick %d\n", *phil_number, stick2);
     sem_wait(&sem_vars[stick2]);
     if (verbose) printf("Philosopher %d got both locks\n", *phil_number);
+    clock_gettime(CLOCK_MONOTONIC, &wait_end);
     // ******************************
+    
+    // *** record timing ****
+    wait_time = ((double)wait_end.tv_sec + (double)wait_end.tv_nsec/1000000000.0) - ((double)wait_start.tv_sec + (double)wait_start.tv_nsec/1000000000.0);
+    pthread_mutex_lock(&mutex_lock);
+    if (wait_time > max_wait_time)
+      max_wait_time = wait_time;
+    wait_time_array[wait_index] = wait_time;
+    wait_index++;
+    pthread_mutex_unlock(&mutex_lock);
+    // **********************
    
    
     // ********* EATING *************

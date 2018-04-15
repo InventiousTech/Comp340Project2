@@ -15,6 +15,9 @@
 // the number of philosophers
 #define NUM_OF_PHILOSOPHERS		5
 
+// The number of times each philosopher loops
+#define NUM_OF_LOOPS  5
+
 // the maximum number of random numbers
 #define MAX_LENGTH 500
 
@@ -38,8 +41,11 @@ enum {THINKING, HUNGRY, EATING} state[NUM_OF_PHILOSOPHERS];
 
 // Timing variables
 struct timespec begin, end;
-double elapsedTime;
+double elapsed_time;
 void print_time();
+double max_wait_time, average_wait_time;
+double wait_time_array[NUM_OF_PHILOSOPHERS*NUM_OF_LOOPS];
+int wait_index;
 
 // Verbosity
 int verbose;
