@@ -1,3 +1,20 @@
+/*
+ *  main.c
+ *  Author:       Isaac Hendrickson and James Ahrens
+ *  Date:         April 10th, 2018
+ 
+ *  Purpose:      This file contains the main routine and some other miscellaneous subroutines for solving Project 2 in COMP 340.
+ *                This program is our solution to the Dining Philosophers problem. N philosophers are created, each as its own thread
+ *                using code found in the philosopher.c file. They each loop through the THINKING -> HUNGRY -> EATING cycle 5 times before
+ *                the program exits.
+ *
+ *  Compile with: make
+ *  Run with:     ./dining_philosophers
+ * 
+ *  Note:         This program uses two mutex locks. One to protect the random-number choosing, and one
+ *                to ensure that the information printed to the console is legible (no interference from other philosophers).
+ */
+
 #include "dp.h"
 #include <pthread.h>
 #include <stdio.h>
@@ -20,11 +37,11 @@ void init()
 {
   int i;
   
-	if ( pthread_mutex_init(&mutex_rand, NULL) != 0)
-		printf("%s\n",strerror(errno));
-	
-	if (pthread_mutex_init(&mutex_lock, NULL) != 0)
-		printf("%s\n", strerror(errno));
+  if ( pthread_mutex_init(&mutex_rand, NULL) != 0)
+    printf("%s\n",strerror(errno));
+  
+  if (pthread_mutex_init(&mutex_lock, NULL) != 0)
+    printf("%s\n", strerror(errno));
      
   for (i = 0; i < NUM_OF_PHILOSOPHERS; i++){
     phil_id[i] = i;
@@ -102,8 +119,8 @@ int main(int argc, char** argv)
   printf("Average wait time was: %.4f\n", average_wait_time);
   printf("Maximum wait time was: %.4f\n", max_wait_time);
   
-	for (i=0; i<NUM_OF_PHILOSOPHERS; i++)
-		sem_destroy(&sem_vars[i]);
-	
+  for (i=0; i<NUM_OF_PHILOSOPHERS; i++)
+    sem_destroy(&sem_vars[i]);
+  
   return 0;
 }

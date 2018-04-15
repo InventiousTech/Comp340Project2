@@ -1,14 +1,15 @@
 /*
- * 	philosopher.c
- *	Author:		    Isaac Hendrickson
- *	Date: 		    April 10th, 2018
+ *  philosopher.c
+ *  Author:       Isaac Hendrickson and James Ahrens
+ *  Date:         April 10th, 2018
  
- *	Purpose:	    This program implements the philosophers for Task 1 of Project 2 in COMP 340
- *                In this problem, there are 5 philosophers and 5 chopsticks at the table.
- *                Each philosopher may only eat if he can grab both chopsticks adjacent to him.
- *                Our method for preventing deadlock is to alternate whether the philosopher
- *                chooses the chopstick to his left or right first. Even numbered philosophers choose
- *                the chopstick to their left (lower number), odd philosophers choose to the right (higher number).
+ *  Purpose:      This program implements the philosophers for Task 2 of Project 2 in COMP 340
+ *                In this problem, there are N philosophers and N+1 chopsticks at the table.
+ *                Each philosopher may only eat if he can grab either both chopsticks adjacent to him, 
+ *                or one adjacent chopstick and the one in the center of the table.
+ *                If a philosopher cannot secure two chopsticks, he waits on a condition variable before he tries again.
+ *                That variable is signalled by every philosopher when he finishes eating, so any time new chopsticks become available, 
+ *                every waiting philosopher loops through to test again
  * 
  *  Note:         This program uses two mutex locks. One to protect the random-number choosing, and one
  *                to ensure that the information printed to the console is legible (no interference from other philosophers).
@@ -67,15 +68,23 @@ void *philosopher_loop(void *param)
     /* Acquire Chopsticks */
     pthread_mutex_lock(&mutex_lock);
     while (1){
+      
+      /* First try to pick up chopstick 1 */
       if (verbose) printf("Philosopher %d attempting to pickup chopsticks\n", *phil_number);
-      if (!sem_trywait(&sem_vars[stick1])){ // If we get the lock for stick1
+      if (!sem_trywait(&sem_vars[stick1])){
+      
+        /* If successful, try chopstick 2 */
         if (verbose) printf("Philosopher %d grabbed chopstick %d\n", *phil_number, stick1);
-        if (!sem_trywait(&sem_vars[stick2])){ // If we get the lock for stick2
+        if (!sem_trywait(&sem_vars[stick2])){
+          /* SUCCESS. break out of the loop */
           if (verbose) printf("Philosopher %d grabbed chopstick %d\n", *phil_number, stick2);
           held_chopsticks = LR;
           break;
         }
-        else if (!sem_trywait(&sem_central)){ // If we get the lock for the center chopstick
+        
+        /* Otherwise, try the center chopstick */
+        else if (!sem_trywait(&sem_central)){
+          /* SUCCESS. break out of the loop */
           if (verbose) printf("Philosopher %d grabbed center chopstick\n", *phil_number, stick2);
           held_chopsticks = LC;
           break;
@@ -85,9 +94,14 @@ void *philosopher_loop(void *param)
           sem_post(&sem_vars[stick1]);
         }
       }
+      
+      /* If we can't get chopstick 1, try chopstick 2 */
       else if (!sem_trywait(&sem_vars[stick2])){
         if (verbose) printf("Philosopher %d grabbed chopstick %d\n", *phil_number, stick2);
+        
+        /* If we got chopstick 2, try the center one */
         if (!sem_trywait(&sem_central)){
+          /* SUCCESS. break out of the loop */
           if (verbose) printf("Philosopher %d grabbed center chopstick\n", *phil_number, stick2);
           held_chopsticks = RC;
           break;

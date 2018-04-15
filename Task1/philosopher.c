@@ -1,9 +1,9 @@
 /*
- * 	philosopher.c
- *	Author:		    Isaac Hendrickson
- *	Date: 		    April 10th, 2018
+ *  philosopher.c
+ *  Author:       Isaac Hendrickson
+ *  Date:         April 10th, 2018
  
- *	Purpose:	    This program implements the philosophers for Task 1 of Project 2 in COMP 340
+ *  Purpose:      This program implements the philosophers for Task 1 of Project 2 in COMP 340
  *                In this problem, there are 5 philosophers and 5 chopsticks at the table.
  *                Each philosopher may only eat if he can grab both chopsticks adjacent to him.
  *                Our method for preventing deadlock is to alternate whether the philosopher
