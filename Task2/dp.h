@@ -58,6 +58,7 @@ int phil_id[NUM_OF_PHILOSOPHERS];
 sem_t		sem_vars[NUM_OF_PHILOSOPHERS];
 sem_t   sem_central;  // Central chopstick
 pthread_mutex_t 	mutex_lock;
+pthread_cond_t    cond_var;
 
 //function that simulates the philosopher operation
 void *philosopher(void *param);

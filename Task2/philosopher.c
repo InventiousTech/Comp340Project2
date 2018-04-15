@@ -65,21 +65,19 @@ void *philosopher_loop(void *param)
     pthread_mutex_unlock(&mutex_print);
     
     /* Acquire Chopsticks */
+    pthread_mutex_lock(&mutex_lock);
     while (1){
       if (verbose) printf("Philosopher %d attempting to pickup chopsticks\n", *phil_number);
-      pthread_mutex_lock(&mutex_lock);
       if (!sem_trywait(&sem_vars[stick1])){ // If we get the lock for stick1
         if (verbose) printf("Philosopher %d grabbed chopstick %d\n", *phil_number, stick1);
         if (!sem_trywait(&sem_vars[stick2])){ // If we get the lock for stick2
           if (verbose) printf("Philosopher %d grabbed chopstick %d\n", *phil_number, stick2);
           held_chopsticks = LR;
-          pthread_mutex_unlock(&mutex_lock);
           break;
         }
         else if (!sem_trywait(&sem_central)){ // If we get the lock for the center chopstick
           if (verbose) printf("Philosopher %d grabbed center chopstick\n", *phil_number, stick2);
           held_chopsticks = LC;
-          pthread_mutex_unlock(&mutex_lock);
           break;
         }
         else{
@@ -92,7 +90,6 @@ void *philosopher_loop(void *param)
         if (!sem_trywait(&sem_central)){
           if (verbose) printf("Philosopher %d grabbed center chopstick\n", *phil_number, stick2);
           held_chopsticks = RC;
-          pthread_mutex_unlock(&mutex_lock);
           break;
         }
         else{
@@ -100,9 +97,10 @@ void *philosopher_loop(void *param)
           sem_post(&sem_vars[stick2]);
         }
       }
-      pthread_mutex_unlock(&mutex_lock);
-      usleep(100000);
+      pthread_cond_wait(&cond_var, &mutex_lock);  // If we haven't gotten chopsticks, wait until someone finishes eating
+      if (verbose) printf("Philosopher %d just got signalled to check chopsticks\n", *phil_number);
     }
+    pthread_mutex_unlock(&mutex_lock);
     clock_gettime(CLOCK_MONOTONIC, &wait_end);
     // ******************************
     
@@ -137,7 +135,8 @@ void *philosopher_loop(void *param)
       sem_post(&sem_vars[stick2]);
       sem_post(&sem_central);
     }
+    if (verbose) printf("Philosopher %d sending signal that we put chopsticks down\n", *phil_number);
+    pthread_cond_broadcast(&cond_var);  // Signal all waiting threads that we just put down chopsticks
     // ******************************
   }
 }
-
